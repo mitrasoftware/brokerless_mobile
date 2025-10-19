@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: pureone
+    ports:
+      - "5431:5432"
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
