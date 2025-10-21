@@ -1,9 +1,101 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"sync"
 
-func ListServices(c *gin.Context) {
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/gin-gonic/gin"
+	"github.com/mitrasoftware/pureone_backend_go/config"
+	"github.com/mitrasoftware/pureone_backend_go/models"
+)
 
+func AddServices(c *gin.Context) {
+
+	var imageUrl string
+	var wg sync.WaitGroup
+	// var mu sync.Mutex
+
+	title := c.PostForm("title")
+	subTitle := c.PostForm("subtitle")
+	icon := c.PostForm("icon")
+	category := c.PostForm("category")
+	blurHash := c.PostForm("blurhash")
+
+	go func(c *gin.Context) {
+		wg.Add(1)
+
+		form, err := c.MultipartForm()
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse form"})
+			return
+		}
+
+		files := form.File["image_url"]
+		if len(files) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No files uploaded"})
+			return
+		}
+
+		fmt.Println(files)
+
+		for _, file := range files {
+			defer wg.Done()
+			f, openErr := file.Open()
+			if openErr != nil {
+				c.JSON(http.StatusOK, gin.H{
+					"error": "Failed to open image",
+				})
+				return
+			}
+			result, uploadErr := config.Uploader.Upload(context.TODO(), &s3.PutObjectInput{
+				Bucket: aws.String("broker-less1"),
+				Key:    aws.String(file.Filename),
+				Body:   f,
+				ACL:    "public-read",
+			})
+			if uploadErr != nil {
+				c.JSON(http.StatusOK, gin.H{
+					"error": uploadErr,
+				})
+				return
+			}
+
+			// image uploaded now save this in db
+
+			imageUrl = result.Location
+
+		}
+	}(c)
+
+	wg.Wait()
+
+	categoryIcons := models.CategoryIcons{
+
+		Title:    title,
+		SubTitle: subTitle,
+		Icon:     icon,
+		Category: category,
+		BlurHash: blurHash,
+	}
+
+	if err := config.DB.Create(&categoryIcons).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":    "success",
+		"data":      categoryIcons,
+		"image_url": imageUrl,
+	})
 }
 
 // import (
