@@ -10,6 +10,14 @@ import (
 	"github.com/mitrasoftware/pureone_backend_go/models"
 )
 
+// GetProducts godoc
+// @Summary Get all products
+// @Description Fetches all products with related category data
+// @Tags Product
+// @Produce  json
+// @Success 200 {array} models.Product
+// @Router /api/get_products [get]
+
 func GetProducts(c *gin.Context) {
 
 	var limit string = c.DefaultQuery("limit", "5") // gives "1" if not provided

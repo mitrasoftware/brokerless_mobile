@@ -14,6 +14,16 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
+// Login godoc
+// @Summary User login
+// @Description Authenticate user with mobile number + OTP and returns JWT token
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param request body models.LoginRequest true "Login credentials"
+// @Success 200 {object} models.LoginResponse
+// @Failure 400 {object} map[string]string
+// @Router /login [post]
 func Login(c *gin.Context) {
 	var body map[string]interface{}
 
@@ -32,7 +42,7 @@ func Login(c *gin.Context) {
 
 	if re.MatchString((mobileNumber.(string))) {
 		validMobile = true
-		c.JSON(http.StatusOK, gin.H{})
+
 		fmt.Println(mobileNumber.(string), "is a valid mobile number")
 	} else {
 		validMobile = false

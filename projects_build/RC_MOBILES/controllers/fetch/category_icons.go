@@ -8,6 +8,16 @@ import (
 	"github.com/mitrasoftware/pureone_backend_go/models"
 )
 
+// CategoryIcons godoc
+// @Summary Get category icons
+// @Description Fetch list of category icons (requires JWT token in Authorization header)
+// @Tags Category
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string][]models.CategoryIconsResponse "List of category icons"
+// @Failure 401 {object} map[string]string "Unauthorized – missing or invalid token"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/fetch_category_icons [get]
 func CategoryIcons(c *gin.Context) {
 
 	var categoryIcons []models.CategoryIconsResponse

@@ -9,11 +9,23 @@ import (
 	"github.com/gin-gonic/gin"
 
 	config "github.com/mitrasoftware/pureone_backend_go/config"
+
+	_ "github.com/mitrasoftware/pureone_backend_go/docs" // import generated docs
 	"github.com/mitrasoftware/pureone_backend_go/routes"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var ginLambda *ginadapter.GinLambdaV2
 
+// @title PureOne Backend API
+// @version 1.0
+// @description API documentation for PureOne backend
+// @host localhost:3000
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func init() {
 	config.LoadEnvVariables()
 
@@ -25,10 +37,13 @@ func init() {
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
 	r.MaxMultipartMemory = 8 << 20
+
 	r = routes.SetupRoutes() // routes.SetupRoutes()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	ginLambda = ginadapter.NewV2(r) //
 
+	// r.Run()
 	r.Run()
 
 }

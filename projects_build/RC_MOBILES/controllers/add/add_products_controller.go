@@ -19,6 +19,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AddProducts godoc
+// @Summary Add a new product
+// @Description Adds a product under a category
+// @Tags Product
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param category_id formData int true "Category ID"
+// @Param title formData string true "Product title"
+// @Param description formData string false "Product description"
+// @Param image formData file false "Product image"
+// @Success 200 {object} models.Product
+// @Failure 400 {object} map[string]string
+// @Router /api/add_products [post]
+
 func AddProducts(c *gin.Context) {
 
 	var wg sync.WaitGroup
