@@ -43,7 +43,6 @@ func init() {
 
 	ginLambda = ginadapter.NewV2(r) //
 
-	// r.Run()
 	r.Run()
 
 }

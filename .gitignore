@@ -2,3 +2,14 @@ projects_build/RC_MOBILES/go.mod
 projects_build/RC_MOBILES/go.sum
 projects_build/RC_MOBILES/.env
 
+tmp/
+go.sum
+build-errors.log
+go.mod
+.DS_Store
+projects_build/RC_MOBILES/DB/tmp/build-errors.log
+projects_build/RC_MOBILES/tmp/build-errors.log
+.gitignore
+projects_build/RC_MOBILES/go.mod
+.gitignore
+projects_build/RC_MOBILES/go.mod
