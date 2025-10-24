@@ -1,0 +1,108 @@
+basePath: /
+definitions:
+  models.CategoryIconsResponse:
+    properties:
+      blurhash:
+        type: string
+      category:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      subtitle:
+        type: string
+      title:
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      mobile:
+        example: "9876543210"
+        type: string
+      otp:
+        example: "123456"
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      status:
+        example: Success
+        type: string
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: API documentation for PureOne backend
+  title: PureOne Backend API
+  version: "1.0"
+paths:
+  /api/fetch_category_icons:
+    get:
+      description: Fetch list of category icons (requires JWT token in Authorization
+        header)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of category icons
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/models.CategoryIconsResponse'
+              type: array
+            type: object
+        "401":
+          description: Unauthorized – missing or invalid token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get category icons
+      tags:
+      - Category
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with mobile number + OTP and returns JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - Auth
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
